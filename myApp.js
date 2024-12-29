@@ -62,17 +62,40 @@ const findPersonById = (personId, done) => {
 const findEditThenSave = (personId, done) => {
 	const foodToAdd = "hamburger";
 
-	done(null /*, data*/);
+	findPersonById(
+		personId,
+		(err, person) => {
+			if (err) return console.error(err);
+
+			person.favoriteFoods.push(foodToAdd);
+			person.save((err, data) => {
+				if (err) return console.error(err);
+				done(null, data);
+			});
+		} /*, data*/,
+	);
 };
 
-const findAndUpdate = (personName, done) => {
+const findAndUpdate = async (personName, done) => {
 	const ageToSet = 20;
 
-	done(null /*, data*/);
+	try {
+		const updatedPerson = await Person.findOneAndUpdate(
+			{ name: personName },
+			{ age: ageToSet },
+			{ new: true },
+		);
+		done(null, updatedPerson);
+	} catch (err) {
+		done(err);
+	}
 };
 
 const removeById = (personId, done) => {
-	done(null /*, data*/);
+	Person.findByIdAndRemove(personId, (err, data) => {
+		if (err) return console.error(err);
+		done(null, data);
+	});
 };
 
 const removeManyPeople = (done) => {
