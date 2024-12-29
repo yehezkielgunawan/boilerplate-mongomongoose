@@ -8,8 +8,25 @@ mongoose.connect(process.env.MONGO_URI, {
 
 let Person;
 
+const personSchema = new mongoose.Schema({
+	name: { type: String, required: true },
+	age: Number,
+	favoriteFoods: [String],
+});
+
+Person = mongoose.model("Person", personSchema);
+
 const createAndSavePerson = (done) => {
-	done(null /*, data*/);
+	const person = new Person({
+		name: "John",
+		age: 25,
+		favoriteFoods: ["Pizza", "Pasta"],
+	});
+
+	person.save((err, data) => {
+		if (err) return console.error(err);
+		done(null, data);
+	});
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
